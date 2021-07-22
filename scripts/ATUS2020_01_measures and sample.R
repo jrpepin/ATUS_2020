@@ -270,10 +270,6 @@ atus.all <- atus.all %>%
 # Respondent variables
 #####################################################################################
 
-# Year -------------------------------------------------------------------------------
-atus.all <- atus.all %>%
-  rename(year = tuyear)
-
 # Gender ---------------------------------------------------------------------------
 atus.all  <- atus.all  %>%
   mutate(
@@ -438,6 +434,7 @@ atus.all <- atus.all %>%
     
 atus.all$exfam <- factor(atus.all$exfam, levels = c("No extra adults", "Extra adults"))
 
+
 # Weekend --------------------------------------------------------------------------
 
 atus.all  <- atus.all  %>%
@@ -454,9 +451,21 @@ atus.all$weekend <- factor(atus.all$weekend, levels = c("Weekday", "Weekend"))
 atus.all  <- atus.all  %>%
   mutate(
     svyweight = case_when(
-      year != 2020   ~ tufnwgtp,
-      year == 2020   ~ tufinlwgt
+      tuyear != 2020   ~ tufnwgtp,
+      tuyear == 2020   ~ tu20fwgt
     ))
+
+# Year & Month -----------------------------------------------------------------------
+## pandemic time use data range: May 10th through December 31st.
+### 01/2020 - 04/2020 -- 2019
+### 05/2020 - 12/2020 -- 2020
+
+atus.all <- atus.all %>%
+  mutate(year = case_when(
+    tuyear != 2020 ~ tuyear,
+    tuyear == 2020 & tumonth <  5 ~ 2019,
+    tuyear == 2020 & tumonth >= 5 ~ 2020
+  ))
 
 #####################################################################################
 # SELECT VARIABLES
