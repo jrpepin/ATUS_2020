@@ -19,24 +19,6 @@ atus.rost0319 <- read_csv(file.path(rostDir0319, rostdata0319), col_types=col_ty
 atus.act0319  <- read_csv(file.path(actDir0319,  actdata0319),  col_types=col_types)
 atus.cps0319  <- read_csv(file.path(cpsDir0319,  cpsdata0319),  col_types=col_types)
 
-
-### TEMP FILITER DATA TO PRACTICE WITH 2019 DATA! !*!*!*!*!*!*!*
-atus.resp0319 <- atus.resp0319 %>%
- mutate(su_year = str_sub(TUCASEID, 1, 4)) %>%
-  filter(su_year != "2019")
-
-atus.rost0319 <- atus.rost0319 %>%
-  mutate(su_year = str_sub(TUCASEID, 1, 4)) %>%
-  filter(su_year != "2019")
-
-atus.act0319 <- atus.act0319 %>%
-  mutate(su_year = str_sub(TUCASEID, 1, 4)) %>%
-  filter(su_year != "2019")
-
-atus.cps0319 <- atus.cps0319 %>%
-  mutate(su_year = str_sub(TUCASEID, 1, 4)) %>%
-  filter(su_year != "2019")
-
 ## Load the ATUS2020 data
 atus.resp2020 <- read_csv(file.path(respDir2020, respdata2020), col_types=col_types)
 atus.rost2020 <- read_csv(file.path(rostDir2020, rostdata2020), col_types=col_types)
@@ -469,12 +451,11 @@ atus.all  <- atus.all  %>%
 atus.all$weekend <- factor(atus.all$weekend, levels = c("Weekday", "Weekend"))
 
 # Survey weights ---------------------------------------------------------------------
- ## !*!*!*!*!* CHANGE TO 2020
 atus.all  <- atus.all  %>%
   mutate(
     svyweight = case_when(
-      year != 2019   ~ tufnwgtp,
-      year == 2019   ~ tufinlwgt
+      year != 2020   ~ tufnwgtp,
+      year == 2020   ~ tufinlwgt
     ))
 
 #####################################################################################

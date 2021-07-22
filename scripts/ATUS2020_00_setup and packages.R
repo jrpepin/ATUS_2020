@@ -100,10 +100,10 @@ actdata0319  <- "atusact_0319.dat"        # Name of the downloaded ATUS0319 acti
 cpsdata0319  <- "atuscps_0319.dat"        # Name of the downloaded ATUS0319 activity CPS data file
 
 # !*!*!*!* PRACTICING WITH 2019 DATA FOR 2020 DATA !*!*!*!* 
-respdata2020 <- "atusresp_2019.dat"       # Name of the downloaded ATUS2020 respondent data file
-rostdata2020 <- "atusrost_2019.dat"       # Name of the downloaded ATUS2020 roster data file
-actdata2020  <- "atusact_2019.dat"        # Name of the downloaded ATUS2020 activity summary data file
-cpsdata2020  <- "atuscps_2019.dat"        # Name of the downloaded ATUS2020 activity CPS data file
+respdata2020 <- "atusresp_2020.dat"       # Name of the downloaded ATUS2020 respondent data file
+rostdata2020 <- "atusrost_2020.dat"       # Name of the downloaded ATUS2020 roster data file
+actdata2020  <- "atusact_2020.dat"        # Name of the downloaded ATUS2020 activity summary data file
+cpsdata2020  <- "atuscps_2020.dat"        # Name of the downloaded ATUS2020 activity CPS data file
 
 
 #####################################################################################
