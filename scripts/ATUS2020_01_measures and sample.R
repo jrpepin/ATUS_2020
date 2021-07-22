@@ -43,9 +43,13 @@ atus.rost2020 <- read_csv(file.path(rostDir2020, rostdata2020), col_types=col_ty
 atus.act2020  <- read_csv(file.path(actDir2020,  actdata2020),  col_types=col_types)
 atus.cps2020  <- read_csv(file.path(cpsDir2020,  cpsdata2020),  col_types=col_types)
 
+### harmonize key activity variable
+  ### janitor::compare_df_cols(atus.act0319, atus.act2020)
+  ### rename activity column to match
+atus.act2020 <- atus.act2020 %>%
+  rename(TRCODEP = TRCODE)
 
 # Combine the separated data files --------------------------------------------------
-# janitor::compare_df_cols(atus.resp0319, atus.resp2020)
 
 atus.resp <- bind_rows(atus.resp0319, atus.resp2020) %>% 
   readr::type_convert()
@@ -476,3 +480,19 @@ atus0320 <- atus.all %>%
 
 save(atus0320,file=file.path(outDir, "atus0320.Rda"))
 load(file.path(outDir, "atus0320.Rda"))
+
+
+# Sample selection
+# atus <- filter(atus, sex == "Women") # women
+# atus <- filter(atus, spsex == "Male" | spsex == "NIU") # Different sex couples or singles
+# atus <- filter(atus, hh_numownkids >=1) # parents
+# atus <- filter(atus, ageychild <=13) #mothers of kids 13 or younger
+# atus <- filter(atus, age >= 18 & age <=54) # prime working age
+# atus <- filter(atus, raceth != "Asian" & raceth != "Other") # white, black, and Hispanic
+
+## Clean up data objects
+remove("atus.resp", 
+       "atus.rost", 
+       "atus.act", 
+       "atus.cps")
+

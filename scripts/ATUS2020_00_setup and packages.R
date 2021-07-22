@@ -55,6 +55,12 @@ if(!require(ggplot2)){
   install.packages("ggplot2")
   library(ggplot2)
 }
+
+if(!require(ggeffects)){
+  install.packages("ggeffects")
+  library(ggeffects)
+}
+
 if(!require(here)){
   install.packages("here")
   library(here)
