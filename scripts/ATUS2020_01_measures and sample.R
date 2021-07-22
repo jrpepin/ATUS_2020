@@ -372,6 +372,16 @@ atus.all <- atus.all %>%
 
 atus.all$kidu2 <- as_factor(atus.all$kidu2)
 
+# Child under 13 -----------------------------------------------------------------------
+atus.all <- atus.all %>%
+  mutate(
+    hhchildu13 = case_when(
+      hhchildu13 ==1 ~ "Child < 13",
+      hhchildu13 ==0 ~ "No children < 13"
+    ))
+
+atus.all$hhchildu13 <- as_factor(atus.all$hhchildu13)
+
 # Number of own HH kids ------------------------------------------------------------
 summary(atus.all$numberhhchild)
 
@@ -475,7 +485,8 @@ atus0320 <- atus.all %>%
   select(tucaseid, year, svyweight,
          tele, socl, actl, pass, 
          ccare, hswrk, leisure, sleep,
-         weekend, exfam, samesex, relate, kidu2, 
+         weekend, exfam, samesex, relate, 
+         kidu2, hhchildu13, numberhhchild,
          employ, educ, raceth, age, gender)
 
 save(atus0320,file=file.path(outDir, "atus0320.Rda"))
@@ -485,10 +496,11 @@ load(file.path(outDir, "atus0320.Rda"))
 # Sample selection
 # atus <- filter(atus, sex == "Women") # women
 # atus <- filter(atus, spsex == "Male" | spsex == "NIU") # Different sex couples or singles
-# atus <- filter(atus, hh_numownkids >=1) # parents
-# atus <- filter(atus, ageychild <=13) #mothers of kids 13 or younger
-# atus <- filter(atus, age >= 18 & age <=54) # prime working age
 # atus <- filter(atus, raceth != "Asian" & raceth != "Other") # white, black, and Hispanic
+
+parents <- filter(atus0320, numberhhchild >=1) # parents
+parents <- filter(parents, hhchildu13 == "Child < 13") # mothers of kids younger than 13
+parents <- filter(parents, age >= 18 & age <=54) # prime working age
 
 ## Clean up data objects
 remove("atus.resp", 

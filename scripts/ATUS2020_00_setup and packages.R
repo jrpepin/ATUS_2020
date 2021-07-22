@@ -51,6 +51,11 @@ if(!require(survey)){
   library(survey)
 }
 
+if(!require(srvyr)){
+  install.packages("srvyr")
+  library(srvyr)
+}
+
 if(!require(ggplot2)){
   install.packages("ggplot2")
   library(ggplot2)
