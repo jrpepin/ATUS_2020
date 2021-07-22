@@ -18,17 +18,3 @@ ATUS-CPS 2020 file
   
   
 __Users should change the file paths in the script ATUS2020_00_setup and packages.__
-
-The data file structure is setup as follows:
-   
-ATUS
-* ATUS0319
-   * atusact_0319
-   * atuscps_0319
-   * atusresp_0319
-   * atusrost_0319
-* ATUS2020
-   * atusact_2020
-   * atuscps_2020
-   * atusresp_2020
-   * atusrost_2020
