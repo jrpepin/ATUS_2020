@@ -29,6 +29,11 @@ if(!require(tidyr)){
   library(tidyr)
 }
 
+if(!require(janitor)){
+  install.packages("janitor")
+  library(janitor)
+}
+
 # To convert labels to factors
 if(!require(sjlabelled)){
   install.packages("sjlabelled")
@@ -78,24 +83,35 @@ conflict_prefer("filter", "dplyr")
 ##  
 ## Download the American Time Use Survey-2020 Microdata files (available 07/23/2021)
 
-respdata <- "atusresp_0319.dat"           # Name of the downloaded respondent data file
-rostdata <- "atusrost_0319.dat"           # Name of the downloaded roster data file
-actdata  <- "atusact_0319.dat"            # Name of the downloaded activity summary data file
-cpsdata  <- "atuscps_0319.dat"            # Name of the downloaded activity CPS data file
+respdata0319 <- "atusresp_0319.dat"       # Name of the downloaded ATUS0319 respondent data file
+rostdata0319 <- "atusrost_0319.dat"       # Name of the downloaded ATUS0319 roster data file
+actdata0319  <- "atusact_0319.dat"        # Name of the downloaded ATUS0319 activity summary data file
+cpsdata0319  <- "atuscps_0319.dat"        # Name of the downloaded ATUS0319 activity CPS data file
 
+# !*!*!*!* PRACTICING WITH 2019 DATA FOR 2020 DATA !*!*!*!* 
+respdata2020 <- "atusresp_2019.dat"       # Name of the downloaded ATUS2020 respondent data file
+rostdata2020 <- "atusrost_2019.dat"       # Name of the downloaded ATUS2020 roster data file
+actdata2020  <- "atusact_2019.dat"        # Name of the downloaded ATUS2020 activity summary data file
+cpsdata2020  <- "atuscps_2019.dat"        # Name of the downloaded ATUS2020 activity CPS data file
 
 
 #####################################################################################
 # Set-up the Directories
 #####################################################################################
 
-projDir <- here()                                          # File path to this project's directory
-dataDir <- "C:/Users/Joanna/Dropbox/Data/ATUS/ATUS0319"    # Name of folder where the ATUS data was downloaded
+projDir <- here()                                              # File path to this project's directory
+dataDir0319 <- "C:/Users/Joanna/Dropbox/Data/ATUS/ATUS0319"    # Name of folder where the ATUS0319 data was downloaded
+dataDir2020 <- "C:/Users/Joanna/Dropbox/Data/ATUS/ATUS2020"    # Name of folder where the ATUS2020 data was downloaded
 
-respDir <- file.path(dataDir, "atusresp_0319")             # Name of sub-folder where the respondent file was extracted
-rostDir <- file.path(dataDir, "atusrost_0319")             # Name of sub-folder where the roster file was extracted
-actDir  <- file.path(dataDir, "atusact_0319")              # Name of sub-folder where the activity file was extracted
-cpsDir  <- file.path(dataDir, "atuscps_0319")              # Name of sub-folder where the CPS file was extracted
+respDir0319 <- file.path(dataDir0319, "atusresp_0319")         # Name of sub-folder where the ATUS0319 respondent file was extracted
+rostDir0319 <- file.path(dataDir0319, "atusrost_0319")         # Name of sub-folder where the ATUS0319 roster file was extracted
+actDir0319  <- file.path(dataDir0319, "atusact_0319")          # Name of sub-folder where the ATUS0319 activity file was extracted
+cpsDir0319  <- file.path(dataDir0319, "atuscps_0319")          # Name of sub-folder where the ATUS0319 CPS file was extracted
+
+respDir2020 <- file.path(dataDir2020, "atusresp_2020")         # Name of sub-folder where the ATUS2020 respondent file was extracted
+rostDir2020 <- file.path(dataDir2020, "atusrost_2020")         # Name of sub-folder where the ATUS2020 roster file was extracted
+actDir2020  <- file.path(dataDir2020, "atusact_2020")          # Name of sub-folder where the ATUS2020 activity file was extracted
+cpsDir2020  <- file.path(dataDir2020, "atuscps_2020")          # Name of sub-folder where the ATUS2020 CPS file was extracted
 
 
 srcDir  <- "scripts"                              # Name of the sub-folder where we will save our source code (R scripts)

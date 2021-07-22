@@ -11,11 +11,62 @@
 #####################################################################################
 
 # Load the data ---------------------------------------------------------------------
+col_types <- readr::cols(.default = readr::col_character()) # load all as character for appending
 
-atus.resp <- read_csv(file.path(respDir, respdata))   # load the respondent data file
-atus.rost <- read_csv(file.path(rostDir, rostdata))   # load the roster data file
-atus.act  <- read_csv(file.path(actDir, actdata))     # load the activity data file
-atus.cps  <- read_csv(file.path(cpsDir, cpsdata))     # load the CPS data file
+## Load the ATUS0319 data
+atus.resp0319 <- read_csv(file.path(respDir0319, respdata0319), col_types=col_types)  
+atus.rost0319 <- read_csv(file.path(rostDir0319, rostdata0319), col_types=col_types)
+atus.act0319  <- read_csv(file.path(actDir0319,  actdata0319),  col_types=col_types)
+atus.cps0319  <- read_csv(file.path(cpsDir0319,  cpsdata0319),  col_types=col_types)
+
+
+### TEMP FILITER DATA TO PRACTICE WITH 2019 DATA! !*!*!*!*!*!*!*
+atus.resp0319 <- atus.resp0319 %>%
+ mutate(su_year = str_sub(TUCASEID, 1, 4)) %>%
+  filter(su_year != "2019")
+
+atus.rost0319 <- atus.rost0319 %>%
+  mutate(su_year = str_sub(TUCASEID, 1, 4)) %>%
+  filter(su_year != "2019")
+
+atus.act0319 <- atus.act0319 %>%
+  mutate(su_year = str_sub(TUCASEID, 1, 4)) %>%
+  filter(su_year != "2019")
+
+atus.cps0319 <- atus.cps0319 %>%
+  mutate(su_year = str_sub(TUCASEID, 1, 4)) %>%
+  filter(su_year != "2019")
+
+## Load the ATUS2020 data
+atus.resp2020 <- read_csv(file.path(respDir2020, respdata2020), col_types=col_types)
+atus.rost2020 <- read_csv(file.path(rostDir2020, rostdata2020), col_types=col_types)
+atus.act2020  <- read_csv(file.path(actDir2020,  actdata2020),  col_types=col_types)
+atus.cps2020  <- read_csv(file.path(cpsDir2020,  cpsdata2020),  col_types=col_types)
+
+
+# Combine the separated data files --------------------------------------------------
+# janitor::compare_df_cols(atus.resp0319, atus.resp2020)
+
+atus.resp <- bind_rows(atus.resp0319, atus.resp2020) %>% 
+  readr::type_convert()
+
+atus.rost <- bind_rows(atus.rost0319, atus.rost2020) %>% 
+  readr::type_convert()
+
+atus.act <- bind_rows(atus.act0319, atus.act2020) %>% 
+  readr::type_convert()
+
+atus.cps <- bind_rows(atus.cps0319, atus.cps2020) %>% 
+  readr::type_convert()
+
+## Clean up data objects
+remove("col_types", 
+       "atus.resp0319", "atus.resp2020",
+       "atus.rost0319", "atus.rost2020",
+       "atus.act0319",  "atus.act2020",
+       "atus.cps0319",  "atus.cps2020")
+
+# Prep the data ---------------------------------------------------------------------
 
 ## change variable case to lower
 atus.resp <-  atus.resp %>% 
@@ -229,10 +280,6 @@ atus.all <- atus.all %>%
   )
    
 
-### TEMP FILITER DATA TO PRACTICE WITH 2019 DATA! !*!*!*!*!*!*!*
-atus.all <- atus.all %>%
-  filter(tuyear <= 2018)
-
 #####################################################################################
 # Respondent variables
 #####################################################################################
@@ -407,14 +454,25 @@ atus.all  <- atus.all  %>%
 
 atus.all$weekend <- factor(atus.all$weekend, levels = c("Weekday", "Weekend"))
 
+# Survey weights ---------------------------------------------------------------------
+ ## !*!*!*!*!* CHANGE TO 2020
+atus.all  <- atus.all  %>%
+  mutate(
+    svyweight = case_when(
+      year != 2019   ~ tufnwgtp,
+      year == 2019   ~ tufinlwgt
+    ))
 
 #####################################################################################
 # SELECT VARIABLES
 #####################################################################################
 
-atus <- atus.all %>%
-  select(tucaseid, year, tufnwgtp,
+atus0320 <- atus.all %>%
+  select(tucaseid, year, svyweight,
          tele, socl, actl, pass, 
          ccare, hswrk, leisure, sleep,
          weekend, exfam, samesex, relate, kidu2, 
          employ, educ, raceth, age, gender)
+
+save(atus0320,file=file.path(outDir, "atus0320.Rda"))
+load(file.path(outDir, "atus0320.Rda"))
