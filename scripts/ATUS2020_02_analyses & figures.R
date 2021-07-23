@@ -32,7 +32,7 @@ dishes <- atus1920_svy %>%
 grocery <- atus1920_svy %>%
   filter(yeardum == 2019 | yeardum == 2020) %>%
   group_by(yeardum, gender) %>%
-  summarize(minutes = survey_mean(dishes, na.rm = TRUE, vartype = "ci"))
+  summarize(minutes = survey_mean(grocery, na.rm = TRUE, vartype = "ci"))
 
 laundry$activity <- "laundry"
 dishes$activity  <- "dishes"

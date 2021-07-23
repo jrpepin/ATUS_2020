@@ -506,8 +506,8 @@ atus.all <- atus.all %>%
 # look at may to dec for 2019 & 2020
 atus.all <- atus.all %>%
   mutate(yeardum = case_when(
-    tuyear == 2019 & tumonth >= 5 &  tu20fwgt != 0 ~ 2019,
-    tuyear == 2020 & tumonth >= 5                  ~ 2020 
+    tuyear == 2019 & tumonth >= 5  ~ 2019,
+    tuyear == 2020 & tumonth >= 5  ~ 2020 
   ))
 
 #####################################################################################
