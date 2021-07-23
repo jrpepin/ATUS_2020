@@ -99,7 +99,6 @@ rostdata0319 <- "atusrost_0319.dat"       # Name of the downloaded ATUS0319 rost
 actdata0319  <- "atusact_0319.dat"        # Name of the downloaded ATUS0319 activity summary data file
 cpsdata0319  <- "atuscps_0319.dat"        # Name of the downloaded ATUS0319 activity CPS data file
 
-# !*!*!*!* PRACTICING WITH 2019 DATA FOR 2020 DATA !*!*!*!* 
 respdata2020 <- "atusresp_2020.dat"       # Name of the downloaded ATUS2020 respondent data file
 rostdata2020 <- "atusrost_2020.dat"       # Name of the downloaded ATUS2020 roster data file
 actdata2020  <- "atusact_2020.dat"        # Name of the downloaded ATUS2020 activity summary data file
@@ -124,6 +123,11 @@ rostDir2020 <- file.path(dataDir2020, "atusrost_2020")         # Name of sub-fol
 actDir2020  <- file.path(dataDir2020, "atusact_2020")          # Name of sub-folder where the ATUS2020 activity file was extracted
 cpsDir2020  <- file.path(dataDir2020, "atuscps_2020")          # Name of sub-folder where the ATUS2020 CPS file was extracted
 
+
+# Steal the 2020 survey weight for 2019
+respdata0320 <- "atusresp_0320.dat"                            # Name of the downloaded ATUS0320 respondent data file
+dataDir0320  <- "C:/Users/Joanna/Dropbox/Data/ATUS/ATUS0320"   # Name of folder where the ATUS0320 data was downloaded
+respDir0320  <- file.path(dataDir0320, "atusresp_0320")        # Name of sub-folder where the ATUS0320 respondent file was extracted
 
 srcDir  <- "scripts"                              # Name of the sub-folder where we will save our source code (R scripts)
 outDir  <- "output"                               # Name of the sub-folder where we will save tables/figures

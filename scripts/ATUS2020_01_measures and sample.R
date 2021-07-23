@@ -19,6 +19,9 @@ atus.rost0319 <- read_csv(file.path(rostDir0319, rostdata0319), col_types=col_ty
 atus.act0319  <- read_csv(file.path(actDir0319,  actdata0319),  col_types=col_types)
 atus.cps0319  <- read_csv(file.path(cpsDir0319,  cpsdata0319),  col_types=col_types)
 
+atus.resp0320.wt <- read_csv(file.path(respDir0320, respdata0320), col_types=col_types)  # to steal the 2020 weight for 2019
+
+
 ## Load the ATUS2020 data
 atus.resp2020 <- read_csv(file.path(respDir2020, respdata2020), col_types=col_types)
 atus.rost2020 <- read_csv(file.path(rostDir2020, rostdata2020), col_types=col_types)
@@ -179,7 +182,16 @@ c(030100:030400, 080100:080200, 180381)
 # Housework
 hswrk <- atus.act$activity %in% 
 c(020101:030000, 080200:080300, 080700:080800, 090100:100000, 160106, 070101, 180701, 180904, 180807, 180903, 080699, 160106)
-     
+ 
+laundry <- atus.act$activity %in% 
+  c(020102)
+
+dishes <- atus.act$activity %in% 
+  c(020203)
+
+grocery <- atus.act$activity %in% 
+  c(070101)
+ 
 # Leisure
 leisure <- atus.act$activity %in% 
 c(120100:130000, 130100:140000, 160101, 160102, 181200:181400)
@@ -208,7 +220,13 @@ atus.act$actcat[hswrk]   <- "housework"
 atus.act$actcat[leisure] <- "leisure"
 atus.act$actcat[sleep]   <- "sleep"
 atus.act$actcat <- as.character(atus.act$actcat)
-     
+
+atus.act$hswrkcat<-NA
+atus.act$hswrkcat[laundry] <- "laundry"
+atus.act$hswrkcat[dishes]  <- "dishes"
+atus.act$hswrkcat[grocery] <- "grocery"
+atus.act$hswrkcat <- as.character(atus.act$hswrkcat)
+
 atus.act$leiscat<-NA
 atus.act$leiscat[socl] <- "social leisure"
 atus.act$leiscat[actl] <- "active leisure"
@@ -229,6 +247,15 @@ atus.act <- atus.act %>%
   inner_join(atus.act, by='tucaseid')
 
 
+## Create summary housework variables
+atus.act <- atus.act %>%
+  group_by(tucaseid) %>%
+  summarise (laundry  = sum(duration[hswrkcat ==  "laundry"],  na.rm=TRUE),
+             dishes   = sum(duration[hswrkcat ==  "dishes"],   na.rm=TRUE),
+             grocery  = sum(duration[hswrkcat ==  "grocery"],  na.rm=TRUE)) %>%
+  inner_join(atus.act, by='tucaseid')
+
+
 # Leisure activity variables
 atus.act <- atus.act %>%
   group_by(tucaseid) %>%
@@ -245,7 +272,7 @@ atus.act <- atus.act %>%
 
 ## AGGREGATE DATA 
 atus.act <- atus.act %>%
-  select(tucaseid, tele, socl, actl, pass, ccare, hswrk, leisure, sleep) %>%
+  select(tucaseid, tele, socl, actl, pass, grocery, dishes, laundry, ccare, hswrk, leisure, sleep) %>%
   group_by(tucaseid) %>% 
   summarise_all(list(~max(.)))
 
@@ -455,6 +482,15 @@ atus.all  <- atus.all  %>%
       tuyear == 2020   ~ tu20fwgt
     ))
 
+# wt <-  atus.resp0320.wt %>%
+  # select(TUYEAR, TUCASEID, TU20FWGT)
+
+atus.all$tu20fwgt[match(atus.all$tucaseid, atus.resp0320.wt$TUCASEID)] <- atus.resp0320.wt$TU20FWGT
+atus.all$tu20fwgt <-as.numeric(atus.all$tu20fwgt)
+
+wt2 <- atus.all %>%
+  select(tuyear, tucaseid, tu20fwgt)
+
 # Year & Month -----------------------------------------------------------------------
 ## pandemic time use data range: May 10th through December 31st.
 ### 01/2020 - 04/2020 -- 2019
@@ -467,13 +503,22 @@ atus.all <- atus.all %>%
     tuyear == 2020 & tumonth >= 5 ~ 2020
   ))
 
+# look at may to dec for 2019 & 2020
+atus.all <- atus.all %>%
+  mutate(yeardum = case_when(
+    tuyear == 2019 & tumonth >= 5 &  tu20fwgt != 0 ~ 2019,
+    tuyear == 2020 & tumonth >= 5                  ~ 2020 
+  ))
+
 #####################################################################################
 # SELECT VARIABLES
 #####################################################################################
 
 atus0320 <- atus.all %>%
-  select(tucaseid, year, svyweight,
+  select(tucaseid, year, yeardum, tumonth,
+         svyweight, tu20fwgt,
          tele, socl, actl, pass, 
+         laundry, dishes, grocery,
          ccare, hswrk, leisure, sleep,
          weekend, exfam, samesex, relate, 
          kidu2, hhchildu13, numberhhchild,
@@ -488,7 +533,8 @@ load(file.path(outDir, "atus0320.Rda"))
 # atus <- filter(atus, spsex == "Male" | spsex == "NIU") # Different sex couples or singles
 # atus <- filter(atus, raceth != "Asian" & raceth != "Other") # white, black, and Hispanic
 
-parents <- filter(atus0320, numberhhchild >=1) # parents
+parents <- atus.all
+parents <- filter(parents, numberhhchild >=1) # parents
 parents <- filter(parents, hhchildu13 == "Child < 13") # mothers of kids younger than 13
 parents <- filter(parents, age >= 18 & age <=54) # prime working age
 
