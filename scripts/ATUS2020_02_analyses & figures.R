@@ -71,9 +71,9 @@ chores <- hswrk %>%
   labs( x        = " ", 
         y        = " ", 
         fill     = " ",
-        title    = "Daily minutes of ________ in 2019 and 2020",
+        title    = "Daily minutes of ________ before and during the COVID19 pandemic",
         subtitle = "Among 18-54 year old parents living with a child less than 13 years old",
-        caption  = "American Time Use Surveys 2019-2020 | Joanna Pepin \nDue to COVID-19 pandemic, data range: May 10th - December 31st") 
+        caption  = "American Time Use Surveys 2019-2020 | Joanna Pepin \nDue to COVID-19 pandemic, data range: May through December in 2019 vs. 2020") 
 
 
 chores
@@ -81,8 +81,30 @@ chores
 ggsave(filename = file.path(outDir, "chores.png"), chores, width=9, height=6, units="in", dpi=300)
 
 
+
+
 #####################################################################################
-# WEIGHTED AVERAGES
+# LINEAR MODELS
+#####################################################################################
+
+# Housework ------------------------------------------------------------------------
+
+## Run linear model
+lm_dishes <- lm(dishes  ~ yeardum + gender + weekend, data = parents, weight=tu20fwgt)
+
+## Created predicted averages
+pdishes   <- ggeffect(lm_dishes, terms = c("yeardum", "gender"))
+pdishes$yeardum <-as.character(pdishes$x)
+
+## Graph it
+pdishes %>%
+  ggplot(aes(group, predicted, fill = yeardum)) +
+  geom_col(width = 0.7, position   =  position_dodge(.8)) +
+  theme_minimal()
+
+
+#####################################################################################
+# Trends over time
 #####################################################################################
 
 ## Weighted data
@@ -108,11 +130,11 @@ hswrk_fig <- hswrkavg %>%
   geom_dl(method = list("last.points", hjust = -.3, vjust = 1, cex = 1, fontface = "bold")) +
   scale_x_continuous(limits = c(2003, 2022), breaks = c(2005, 2010, 2015, 2020)) +
   scale_y_continuous(limits = c(50, 175)) +
-theme_minimal(14) +
-theme( legend.position   = "none",
-      panel.grid.minor.x = element_blank(),
-      panel.grid.minor.y = element_blank(),
-      plot.margin        = unit(c(1.5,1.5,2,1.5),"cm")) +
+  theme_minimal(14) +
+  theme( legend.position   = "none",
+         panel.grid.minor.x = element_blank(),
+         panel.grid.minor.y = element_blank(),
+         plot.margin        = unit(c(1.5,1.5,2,1.5),"cm")) +
   labs( x        = " ", 
         y        = " ", 
         fill     = " ",
@@ -163,24 +185,3 @@ ccare_fig <- ccareavg %>%
 ccare_fig
 
 ggsave(filename = file.path(outDir, "ccare_fig.png"), ccare_fig, width=9, height=6, units="in", dpi=300)
-
-
-#####################################################################################
-# LINEAR MODELS
-#####################################################################################
-
-# Housework ------------------------------------------------------------------------
-
-## Run linear model
-lm_hswrk <- lm(hswrk  ~ relate + year + weekend, data = atus0320, weight=svyweight)
-
-## Created predicted averages
-phswrk   <- ggeffect(lm_hswrk, terms = c("year", "relate"))
-
-## Graph it
-phswrk %>%
-  ggplot(aes(x, predicted, color = group)) +
-  geom_line() +
-  theme_minimal()
-
-
